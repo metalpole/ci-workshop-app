@@ -2,7 +2,36 @@
 version: 2
 jobs:
   train_and_test:
-    # ... same as previous code snippet
+    docker:
+      - image: circleci/python:3.6.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: bin/install_dependencies.sh
+      - save_cache:
+          paths:
+            - .venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      - run:
+          name: run unit tests
+          command: bin/test.sh
+      - run:
+          name: train model
+          command: bin/train_model.sh
+      - run:
+          name: run model metrics tests
+          command: bin/test_model_metrics.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   deploy_staging:
     docker:
       - image: circleci/python:3.6.1

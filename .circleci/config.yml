@@ -49,7 +49,7 @@ jobs:
           at: .
       - run:
           name: deploy app to prod
-          command: bin/deploy_to_heroku.sh ci-workshop-app-bob-prod
+          command: bin/deploy_to_heroku.sh iwanttogohome
 
 
 workflows:
